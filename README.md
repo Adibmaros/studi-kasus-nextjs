@@ -30,7 +30,7 @@ Pastikan perangkat kamu sudah terinstall:
 
 ### 1. Clone Repository
 ```bash
-git clone <url-repo-ini>
+git clone https://github.com/Adibmaros/studi-kasus-nextjs.git
 cd studi-kasus-nextjs
 ```
 
