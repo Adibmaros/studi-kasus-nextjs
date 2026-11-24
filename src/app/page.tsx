@@ -7,12 +7,12 @@ export default function HomePage() {
         <div>
           <h1 className="page-title">Katalog Produk</h1>
           <p className="page-subtitle">
-            Level 1: CRUD dasar menggunakan Next.js Route Handlers + Prisma 5 +
-            MySQL Lokal.
+            Halaman publik (read-only). Login sebagai admin untuk menambah,
+            mengedit, atau menghapus produk.
           </p>
         </div>
       </div>
-      <ProductList />
+      <ProductList isAdmin={false} />
     </section>
   );
 }

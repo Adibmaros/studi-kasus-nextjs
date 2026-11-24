@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import ProductForm from "@/components/ProductForm";
 import type { Product } from "@/types/product";
 
-export default function EditProductPage() {
+export default function AdminEditProductPage() {
   const params = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,14 +43,17 @@ export default function EditProductPage() {
         <div>
           <h1 className="page-title">Edit Produk</h1>
           <p className="page-subtitle">
-            Data akan diperbarui melalui Route Handler PUT /api/products/[id].
+            Data diperbarui melalui Route Handler PUT /api/products/[id]
+            (terproteksi session admin).
           </p>
         </div>
       </div>
 
       {loading && <div className="card empty-state">Memuat data produk...</div>}
       {error && <div className="alert alert-error">{error}</div>}
-      {!loading && !error && product && <ProductForm initialData={product} />}
+      {!loading && !error && product && (
+        <ProductForm initialData={product} redirectTo="/admin" />
+      )}
     </section>
   );
 }

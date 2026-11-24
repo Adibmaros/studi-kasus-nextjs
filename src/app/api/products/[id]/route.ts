@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
-// GET /api/products/[id] - Ambil detail 1 produk
+// GET /api/products/[id] - Publik: Ambil detail 1 produk
 export async function GET(_request: NextRequest, context: RouteContext) {
   try {
     const { id } = await context.params;
@@ -39,9 +40,17 @@ export async function GET(_request: NextRequest, context: RouteContext) {
   }
 }
 
-// PUT /api/products/[id] - Update produk
+// PUT /api/products/[id] - Khusus Admin (wajib login): Update produk
 export async function PUT(request: NextRequest, context: RouteContext) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized. Silakan login terlebih dahulu." },
+        { status: 401 }
+      );
+    }
+
     const { id } = await context.params;
     const productId = Number(id);
 
@@ -111,9 +120,17 @@ export async function PUT(request: NextRequest, context: RouteContext) {
   }
 }
 
-// DELETE /api/products/[id] - Hapus produk
+// DELETE /api/products/[id] - Khusus Admin (wajib login): Hapus produk
 export async function DELETE(_request: NextRequest, context: RouteContext) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized. Silakan login terlebih dahulu." },
+        { status: 401 }
+      );
+    }
+
     const { id } = await context.params;
     const productId = Number(id);
 

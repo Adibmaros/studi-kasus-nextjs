@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
-// GET /api/products - Ambil semua produk
+// GET /api/products - Publik: Ambil semua produk
 export async function GET() {
   try {
     const products = await prisma.product.findMany({
@@ -18,9 +19,17 @@ export async function GET() {
   }
 }
 
-// POST /api/products - Tambah produk baru
+// POST /api/products - Khusus Admin (wajib login): Tambah produk baru
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized. Silakan login terlebih dahulu." },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const name = typeof body.name === "string" ? body.name.trim() : "";
     const description =

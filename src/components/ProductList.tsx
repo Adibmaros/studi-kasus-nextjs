@@ -12,7 +12,11 @@ function formatRupiah(amount: number) {
   }).format(amount);
 }
 
-export default function ProductList() {
+interface ProductListProps {
+  isAdmin?: boolean;
+}
+
+export default function ProductList({ isAdmin = false }: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -89,10 +93,14 @@ export default function ProductList() {
   if (products.length === 0) {
     return (
       <div className="card empty-state">
-        <p style={{ marginBottom: "1rem" }}>Belum ada produk di database.</p>
-        <Link href="/products/new" className="btn btn-primary">
-          + Tambah Produk Pertama
-        </Link>
+        <p style={{ marginBottom: isAdmin ? "1rem" : 0 }}>
+          Belum ada produk di database.
+        </p>
+        {isAdmin && (
+          <Link href="/admin/products/new" className="btn btn-primary">
+            + Tambah Produk Pertama
+          </Link>
+        )}
       </div>
     );
   }
@@ -114,24 +122,26 @@ export default function ProductList() {
             </div>
           </div>
 
-          <div className="actions">
-            <Link
-              href={`/products/${product.id}/edit`}
-              className="btn btn-secondary"
-              style={{ flex: 1 }}
-            >
-              Edit
-            </Link>
-            <button
-              type="button"
-              className="btn btn-danger"
-              style={{ flex: 1 }}
-              disabled={deletingId === product.id}
-              onClick={() => handleDelete(product)}
-            >
-              {deletingId === product.id ? "Menghapus..." : "Hapus"}
-            </button>
-          </div>
+          {isAdmin && (
+            <div className="actions">
+              <Link
+                href={`/admin/products/${product.id}/edit`}
+                className="btn btn-secondary"
+                style={{ flex: 1 }}
+              >
+                Edit
+              </Link>
+              <button
+                type="button"
+                className="btn btn-danger"
+                style={{ flex: 1 }}
+                disabled={deletingId === product.id}
+                onClick={() => handleDelete(product)}
+              >
+                {deletingId === product.id ? "Menghapus..." : "Hapus"}
+              </button>
+            </div>
+          )}
         </article>
       ))}
     </div>
