@@ -4,9 +4,9 @@ import Navbar from "@/components/Navbar";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Katalog Produk — Level 2 Auth.js & Admin",
+  title: "Katalog Produk — Level 3 Supabase PostgreSQL",
   description:
-    "Studi kasus Next.js Fullstack + Prisma 5 + MySQL + Auth.js (NextAuth v5)",
+    "Studi kasus Next.js Fullstack + Prisma 5 + Supabase PostgreSQL + Auth.js",
 };
 
 export default function RootLayout({

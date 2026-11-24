@@ -1,69 +1,63 @@
-# Level 2 — Autentikasi Admin dengan Auth.js (NextAuth v5)
+# Level 3 — Migrasi Database ke Supabase (PostgreSQL)
 
-Branch: `level-2-auth-admin`
+Branch: `level-3-supabase`
 
 ## Tujuan Pembelajaran
-- Menambahkan tabel `User` di Prisma (`email`, `password` ter-hash dengan `bcryptjs`, `role: "ADMIN"`).
-- Menerapkan autentikasi **Credentials (Email & Password)** menggunakan **Auth.js (NextAuth v5)** dengan pola *Split Config* (`auth.config.ts` untuk Edge Middleware + `auth.ts` untuk server).
-- Membuat fitur **Register** (`/api/auth/register`) dan **Login** (`/login`) menggunakan Route Handlers.
-- Memisahkan halaman publik (`/`) dan halaman khusus admin (`/admin/*`) yang diproteksi oleh `src/middleware.ts`.
-- Memproteksi API mutasi (`POST`, `PUT`, `DELETE` pada `/api/products`) agar mengembalikan `401 Unauthorized` jika belum login.
+- Memigrasikan database Prisma 5 dari **MySQL lokal** ke **Supabase (Cloud PostgreSQL)** tanpa mengubah logika bisnis aplikasi.
+- Memahami perbedaan **Connection Pooling (`DATABASE_URL`)** vs **Direct Connection (`DIRECT_URL`)** pada Prisma + Supabase.
+- Menyiapkan aplikasi agar siap dikembangkan lebih lanjut melalui folder `challenges/` dan siap di-deploy ke cloud (misal Vercel).
 
-## Struktur Endpoint API
-| Method | Endpoint | Akses | Fungsi |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Publik | Registrasi akun admin baru |
-| `GET/POST` | `/api/auth/[...nextauth]` | Publik | Endpoint autentikasi Auth.js (login, session, signout) |
-| `GET` | `/api/products` | Publik | Mengambil semua produk |
-| `GET` | `/api/products/[id]` | Publik | Mengambil detail 1 produk |
-| `POST` | `/api/products` | **Admin (Login)** | Menambahkan produk baru |
-| `PUT` | `/api/products/[id]` | **Admin (Login)** | Memperbarui produk |
-| `DELETE` | `/api/products/[id]` | **Admin (Login)** | Menghapus produk |
+## Apa yang Berubah dari Level 2?
+Jalankan perintah berikut untuk melihat perubahannya secara langsung:
+```bash
+git diff level-2-auth-admin..level-3-supabase
+```
+Inti perubahan ada pada `prisma/schema.prisma`:
+- `provider` diubah dari `"mysql"` menjadi `"postgresql"`.
+- Menambahkan `directUrl = env("DIRECT_URL")` untuk keperluan `prisma db push` / `prisma migrate`.
 
-## Cara Menjalankan
+## Cara Setup & Menjalankan
 
-### 1. Install Dependencies
+### 1. Buat Project di Supabase
+1. Buka [supabase.com](https://supabase.com) dan buat project baru (gratis).
+2. Setelah project aktif, klik tombol **Connect** di bagian atas dashboard → pilih tab **ORMs** → pilih **Prisma** (atau tab **Connection String**).
+3. Salin 2 URL koneksi:
+   - **Transaction Pooler (port `6543`)** → masukkan ke `DATABASE_URL` (pastikan ada `?pgbouncer=true`).
+   - **Session Pooler / Direct (port `5432`)** → masukkan ke `DIRECT_URL`.
+
+### 2. Install Dependencies & Konfigurasi `.env`
 ```bash
 npm install
+cp .env.example .env
 ```
+Isi `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET`, dan `AUTH_URL` di `.env`.
 
-### 2. Konfigurasi `.env`
-Salin `.env.example` menjadi `.env` (atau update `.env` dari Level 1 dengan menambahkan `AUTH_SECRET` & `AUTH_URL`):
-```env
-DATABASE_URL="mysql://root:@localhost:3306/studi_kasus_nextjs"
-AUTH_SECRET="ganti-dengan-random-secret-minimal-32-karakter"
-AUTH_URL="http://localhost:3000"
-```
-*(Tips: jalankan `npx auth secret` untuk men-generate `AUTH_SECRET` acak yang aman.)*
-
-### 3. Push Schema Prisma & Seeding Data Awal
+### 3. Push Schema ke Supabase & Seeding Data Awal
 ```bash
+npx prisma generate
 npx prisma db push
 npm run db:seed
 ```
-Seeding akan membuat akun admin default:
+Buka **Table Editor** di dashboard Supabase untuk memastikan tabel `User` dan `Product` sudah terbuat beserta data awalnya!
+
+Akun admin default hasil seed:
 - **Email:** `admin@example.com`
 - **Password:** `admin123`
-
-Kamu juga bisa mendaftar akun baru lewat halaman `/register`.
 
 ### 4. Jalankan Aplikasi
 ```bash
 npm run dev
 ```
-- Katalog publik: [http://localhost:3000](http://localhost:3000)
-- Login admin: [http://localhost:3000/login](http://localhost:3000/login)
-- Dashboard admin (wajib login): [http://localhost:3000/admin](http://localhost:3000/admin)
 
 ---
 
-## Bandingkan Perubahan dari Level 1
+## Langkah Selanjutnya: Kerjakan Tantangan!
+Setelah Level 3 berjalan lancar di Supabase, buat branch baru dan kerjakan tantangan di folder [challenges/](./challenges/README.md):
 ```bash
-git diff --stat level-1-crud-mysql..level-2-auth-admin
+git checkout -b challenge/nama-kamu
 ```
-
-## Langkah Selanjutnya
-Lanjut ke Level 3 untuk migrasi database dari MySQL lokal ke **Supabase (PostgreSQL)**:
-```bash
-git checkout level-3-supabase
-```
+1. [Tantangan 1: Tailwind CSS](./challenges/01-tailwindcss.md)
+2. [Tantangan 2: shadcn/ui](./challenges/02-shadcn-ui.md)
+3. [Tantangan 3: TanStack Query](./challenges/03-tanstack-query.md)
+4. [Tantangan 4: Upload File ke Supabase Storage](./challenges/04-supabase-storage-upload.md)
+5. [Tantangan 5: Bonus (Zod, Pagination, Multi-Role, Deploy)](./challenges/05-bonus-challenges.md)
