@@ -28,16 +28,22 @@ Pastikan perangkat kamu sudah terinstall:
 
 ## Cara Mulai Belajar
 
-### 1. Clone Repository
+### 1. Clone Repository & Cek Daftar Branch
 ```bash
 git clone https://github.com/Adibmaros/studi-kasus-nextjs.git
 cd studi-kasus-nextjs
+
+# Lihat semua branch yang tersedia (lokal & remote)
+git branch -a
 ```
+*(Saat pertama kali clone, hanya branch `main` yang tampil di `git branch`. Gunakan `git branch -a` untuk melihat seluruh branch remote yang tersedia.)*
 
 ### 2. Pindah ke Level 1 Terlebih Dahulu
 ```bash
 git checkout level-1-crud-mysql
 ```
+*(Perintah di atas otomatis membuat local branch `level-1-crud-mysql` yang tersambung ke `origin/level-1-crud-mysql`.)*
+
 Baca file `README.md` di dalam branch `level-1-crud-mysql` untuk instruksi setup database, `.env`, dan cara menjalankan aplikasi.
 
 ### 3. Lanjut ke Level Berikutnya
@@ -49,13 +55,13 @@ git checkout level-3-supabase
 ```
 
 ### 4. Tips Belajar Efektif dengan `git diff`
-Kamu bisa melihat **persis file apa saja yang berubah** saat naik tingkat:
+Kamu bisa melihat **persis file apa saja yang berubah** saat naik tingkat (pakai prefix `origin/` agar selalu bisa dijalankan kapan saja setelah clone):
 ```bash
 # Lihat perubahan dari Level 1 ke Level 2 (penambahan Auth & Admin)
-git diff --stat level-1-crud-mysql..level-2-auth-admin
+git diff --stat origin/level-1-crud-mysql..origin/level-2-auth-admin
 
 # Lihat perubahan dari Level 2 ke Level 3 (migrasi ke Supabase)
-git diff level-2-auth-admin..level-3-supabase
+git diff origin/level-2-auth-admin..origin/level-3-supabase
 ```
 
 ---
